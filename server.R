@@ -1,9 +1,8 @@
-# Derived from https://github.com/tgouhier/climit
-
 library(shiny)
 library(ggplot2)
 library(dplyr)
-
+library(ggthemes)
+library(grid)
 
 shinyServer(function(input, output) {
   
@@ -29,7 +28,7 @@ shinyServer(function(input, output) {
   } # end function binomial.histogram 
   
   
-  # Example of calling "binomial.histogram" function. 
+  # call "binomial.histogram" function. 
   n <- input$n
   prob <- input$p/100 
   my.colors <- c("paleturquoise", "sky blue") 
@@ -38,9 +37,7 @@ shinyServer(function(input, output) {
   
   }) 
 
-  
-
-   # plot 2 - Sampling Distribution By Simulation
+  # plot 2 - Sampling Distribution By Simulation
   
   output$sampling.dist = renderPlot({
     
@@ -60,7 +57,8 @@ shinyServer(function(input, output) {
     mindist <- floor(min(dist$dist))
     maxdist <- floor(max(dist$dist))
     mybreaks <- as.integer(maxdist-mindist)
-    myxlim <- c(mindist-1, maxdist+1)
+    myxlim <- c(mindist-2, maxdist+2)
+    myylim <- c(0, max(table(dist$dist))*(mybreaks/14)*1.3)
     
     dist$highlight <- ifelse(dist$dist %in% dist_out, "highlight", "normal")
     mycolours <- c("highlight" = "red", "normal" = "grey50")
@@ -71,10 +69,24 @@ shinyServer(function(input, output) {
     
 
 g1<- ggplot(dist, aes(x = dist)) + 
-  geom_histogram(binwidth = mybreaks/14, aes(fill=highlight)) +
+  geom_histogram(binwidth = mybreaks/14, aes(fill=highlight), colour = "black") +
+  scale_fill_manual(values = c("red", "grey50"))+
   xlim(myxlim)+
-  theme_bw() 
- print(g1)
+#  ylim(myylim)+
+  theme_fivethirtyeight()+
+#  annotate("segment", x = dist$dist[(k*0.025)+1], xend = dist$dist[(k*0.975)],
+#           y = Inf, yend = Inf,
+#           arrow=arrow(ends="both", angle = 90, length = unit(.2, "cm")), vjust=10)+
+# annotate("text", x = (dist$dist[(k*0.025)+1]+dist$dist[(k*0.975)+1])/2, y = Inf,
+#           label = paste("95% of Samples Are In The Range ", 
+#                         round(dist$dist[(k*0.025)+1],1), "% : ", round(dist$dist[(k*0.975)], 1), "% (Mean = ", round(mean(dist$dist),1), "%)", sep = ""), vjust =2) + 
+  annotate("segment", x = mean(dist$dist), xend =  mean(dist$dist), y = 0, 
+           yend = max(table(dist$dist))*(mybreaks/14)*1.05, colour = "dodgerblue4", size = 2)+
+  guides(fill=FALSE)+
+  ggtitle(paste("95% of Samples Are In The Range ", 
+                round(dist$dist[(k*0.025)+1],1), "% : ", round(dist$dist[(k*0.975)], 1), "% (Mean = ", round(mean(dist$dist),1), "%)", sep = ""))+
+  theme(plot.title=element_text(hjust=0.5))
+  print(g1)
    
 
   })
