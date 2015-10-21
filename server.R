@@ -11,7 +11,11 @@ shinyServer(function(input, output) {
   output$binom.dist = renderPlot({
     
   
-  binomial.histogram <- function(n, p = 0.5, col = "white") { 
+  binomial.histogram <- function(n, p = prob, col = "white") { 
+    pt <- prop.test(n*p, n, conf.level=0.95)
+    ptlow <- pt$conf.int[1]
+    pthigh <- pt$conf.int[2]
+    conf <- paste("Theoretical Sampling Distribution\n95% of Samples Are In The Range ", round(ptlow*100, 1), "% - ", round(pthigh*100, 1), "%", sep = "")
     bin.min <- 0 
     bin.max <- n 
     bin.range <- bin.min : bin.max 
@@ -21,9 +25,8 @@ shinyServer(function(input, output) {
     attr(my.binomial, "class") <- "histogram" 
     col.border <- col 
     col.border["white" == col] <- "black" 
-    plot(my.binomial, border = col.border, col = col, main = 
-          "Theoretical Sampling Distribution\nBinomial Distribution Using dbinom() Function", 
-         xlab = "Sample Means", ylab = "") 
+    plot(my.binomial, border = col.border, col = col, 
+         xlab = "Sample Means", ylab = "", main = conf) 
     return(my.binomial) 
   } # end function binomial.histogram 
   
@@ -32,7 +35,8 @@ shinyServer(function(input, output) {
   n <- input$n
   prob <- input$p/100 
   my.colors <- c("paleturquoise", "sky blue") 
-  my.binomial <- binomial.histogram(n, p, my.colors)
+  my.binomial <- binomial.histogram(n, prob, my.colors)
+  
   
   
   }) 
