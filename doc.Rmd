@@ -1,0 +1,23 @@
+---
+title: "Application Instructions"
+author: 
+date: 
+output: html_document
+---
+
+# Application Instructions
+
+
+* This app compares a theoretical sampling distribution based on your selected sample size and population proportion with a simulated sampling distribution (based on 400 samples).
+
+* First select your sample size and population proportion using the sliders.
+
+* The **Theory** tab shows a perfect binomial distribution based on your selections, using statistical theory, and generated using the dbinom() function. 
+
+* The **Simulation** tab actually simulates drawing 400 samples (of a size determined by your input) from a larger population (where the % *success* rate is determined by your input). 
+
+* This allows us to empirically see the range of likely sample means if you were to take many samples. The plot shows where 95% of your sample means lie, which enables you to see a 95% confidence interval based on simulation rather than theory (i.e. 95% of your samples are within a certain range so you can be 95% confident that any one sample of that size from that population will be within the range shown). The "outliers" (i.e. the bottom 2.5% and top 2.5% of sample means are shown in red). 
+
+* The summary tab compares the simulated results with the theoretical confidence interval based on the binomial distribution.
+
+* Whether using the **theory** method or the **simulation** method, this app can help show a general audience that increasing your sample size will narrow the range of your confidence interval around the sampling distribution mean, and thus will result in a more accurate result. 
