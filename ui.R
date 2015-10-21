@@ -28,7 +28,6 @@ shinyUI(fluidPage(
       tabsetPanel(
         tabPanel("Theory", plotOutput("binom.dist")), 
         tabPanel("Simulation", plotOutput("sampling.dist")), 
-        tabPanel("Summary"),
         tabPanel("Documentation", includeMarkdown("doc.Rmd"))
       )
     )

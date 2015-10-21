@@ -22,8 +22,8 @@ shinyServer(function(input, output) {
     col.border <- col 
     col.border["white" == col] <- "black" 
     plot(my.binomial, border = col.border, col = col, main = 
-           paste("Histogram of Binomial (n = ", n, ", p = ", prob, ")", sep = ""), 
-         xlab = "k", ylab = "P[X = k]") 
+          "Theoretical Sampling Distribution\nBinomial Distribution Using dbinom() Function", 
+         xlab = "Sample Means", ylab = "") 
     return(my.binomial) 
   } # end function binomial.histogram 
   
@@ -72,23 +72,21 @@ g1<- ggplot(dist, aes(x = dist)) +
   geom_histogram(binwidth = mybreaks/14, aes(fill=highlight), colour = "black") +
   scale_fill_manual(values = c("red", "grey50"))+
   xlim(myxlim)+
-#  ylim(myylim)+
   theme_fivethirtyeight()+
-#  annotate("segment", x = dist$dist[(k*0.025)+1], xend = dist$dist[(k*0.975)],
-#           y = Inf, yend = Inf,
-#           arrow=arrow(ends="both", angle = 90, length = unit(.2, "cm")), vjust=10)+
-# annotate("text", x = (dist$dist[(k*0.025)+1]+dist$dist[(k*0.975)+1])/2, y = Inf,
-#           label = paste("95% of Samples Are In The Range ", 
-#                         round(dist$dist[(k*0.025)+1],1), "% : ", round(dist$dist[(k*0.975)], 1), "% (Mean = ", round(mean(dist$dist),1), "%)", sep = ""), vjust =2) + 
+
   annotate("segment", x = mean(dist$dist), xend =  mean(dist$dist), y = 0, 
            yend = max(table(dist$dist))*(mybreaks/14)*1.05, colour = "dodgerblue4", size = 2)+
   guides(fill=FALSE)+
-  ggtitle(paste("95% of Samples Are In The Range ", 
-                round(dist$dist[(k*0.025)+1],1), "% : ", round(dist$dist[(k*0.975)], 1), "% (Mean = ", round(mean(dist$dist),1), "%)", sep = ""))+
+  ggtitle(paste("Simulated Sampling Distribution\n95% of Samples Are In The Range ", 
+                round(dist$dist[(k*0.025)+1],1), "% - ", round(dist$dist[(k*0.975)], 1), 
+                "% (Mean = ", round(mean(dist$dist),1), "%)", sep = ""))+
   theme(plot.title=element_text(hjust=0.5))
   print(g1)
    
 
   })
-  
+
+
+
+    
 })
