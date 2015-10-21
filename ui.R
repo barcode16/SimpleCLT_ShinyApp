@@ -3,7 +3,7 @@ library(shiny)
 
 shinyUI(fluidPage(
   
-  titlePanel("Sampling Distribution - Theory And Simulation"),
+  titlePanel("Sampling Distribution - Theory And Simulation Comparison"),
   
   sidebarLayout(
     
@@ -29,15 +29,10 @@ shinyUI(fluidPage(
         tabPanel("Theory", plotOutput("binom.dist")), 
         tabPanel("Simulation", plotOutput("sampling.dist")), 
         tabPanel("Summary"),
-        tabPanel("Documentation")
+        tabPanel("Documentation", includeMarkdown("doc.Rmd"))
       )
     )
   )
 ))
-
-
-
-
-
 
 
