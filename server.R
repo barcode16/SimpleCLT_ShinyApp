@@ -7,15 +7,15 @@ library(grid)
 shinyServer(function(input, output) {
   
 # Plot 1 - Sampling Distribution Using Theory
-  
   output$binom.dist = renderPlot({
     
-  
-  binomial.histogram <- function(n, p = prob, col = "white") { 
+  binomial.histogram <- function(n, p = prob) { 
     pt <- prop.test(n*p, n, conf.level=0.95)
     ptlow <- pt$conf.int[1]
     pthigh <- pt$conf.int[2]
-    conf <- paste("Theoretical Sampling Distribution\n95% of Samples Are In The Range ", round(ptlow*100, 1), "% - ", round(pthigh*100, 1), "%", sep = "")
+    ptmean <- pt$null.value*100
+    conf <- paste("Theoretical Sampling Distribution\n95% of Samples Are In The Range ", round(ptlow*100, 1), "% - ", round(pthigh*100, 1), 
+                  "% (Mean = ", round(prob*100,1), "%)" , sep = "")
     bin.min <- 0 
     bin.max <- n 
     bin.range <- bin.min : bin.max 
@@ -23,35 +23,28 @@ shinyServer(function(input, output) {
     my.binomial$breaks <- (bin.min - 0.5) : (bin.max + 0.5) 
     my.binomial$counts <- dbinom(bin.range, bin.max, prob) 
     attr(my.binomial, "class") <- "histogram" 
-    col.border <- col 
-    col.border["white" == col] <- "black" 
-    plot(my.binomial, border = col.border, col = col, 
-         xlab = "Sample Means", ylab = "", main = conf) 
+    plot(my.binomial, border = c("grey50", "grey70"), col = c("grey50", "grey70"), 
+         xlab = "Sample Means", ylab = "", main = conf, axes=FALSE) 
+    Axis(side=1, labels=c("0", "25", "50", "75", "100"), at = quantile(my.binomial$breaks))
     return(my.binomial) 
   } # end function binomial.histogram 
-  
   
   # call "binomial.histogram" function. 
   n <- input$n
   prob <- input$p/100 
-  my.colors <- c("paleturquoise", "sky blue") 
-  my.binomial <- binomial.histogram(n, prob, my.colors)
-  
-  
+  my.binomial <- binomial.histogram(n, prob)
   
   }) 
 
   # plot 2 - Sampling Distribution By Simulation
-  
   output$sampling.dist = renderPlot({
     
     n = input$n
     p = input$p/100
-    k = 400
+    k = 1000
     
-    set.seed(4444)
-    
-    dist <- rbinom(k, n, prob = p)
+    #set.seed(4444) # seed only used for testing.
+        dist <- rbinom(k, n, prob = p)
     dist <- data.frame(dist)
     dist$dist <- dist$dist/n*100
     dist <- arrange(dist, dist)
@@ -63,15 +56,12 @@ shinyServer(function(input, output) {
     mybreaks <- as.integer(maxdist-mindist)
     myxlim <- c(mindist-2, maxdist+2)
     myylim <- c(0, max(table(dist$dist))*(mybreaks/14)*1.3)
-    
     dist$highlight <- ifelse(dist$dist %in% dist_out, "highlight", "normal")
     mycolours <- c("highlight" = "red", "normal" = "grey50")
-    
     mind <- min(dist95)
     maxd <- max(dist95)
     m <- mean(dist$dist)
     
-
 g1<- ggplot(dist, aes(x = dist)) + 
   geom_histogram(binwidth = mybreaks/14, aes(fill=highlight), colour = "black") +
   scale_fill_manual(values = c("red", "grey50"))+
@@ -87,10 +77,6 @@ g1<- ggplot(dist, aes(x = dist)) +
   theme(plot.title=element_text(hjust=0.5))
   print(g1)
    
-
   })
 
-
-
-    
 })
